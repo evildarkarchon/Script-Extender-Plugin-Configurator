@@ -47,7 +47,9 @@ class ConfigEditor(QMainWindow):
     def load_config_file(self) -> None:
         file_dialog = QFileDialog()
         options = QFileDialog().options()
-        file_path, _ = file_dialog.getOpenFileName(self, "Open Config File", "", "Config Files (*.ini *.toml);;All Files (*)", options=options)
+        file_path, _ = file_dialog.getOpenFileName(
+            self, "Open Config File", "", "Config Files (*.ini *.toml);;All Files (*)", options=options
+        )
 
         if file_path:
             self.current_file_path = file_path
@@ -97,14 +99,16 @@ class ConfigEditor(QMainWindow):
             else:
                 key_line_edit = QLineEdit()
                 key_line_edit.setPlaceholderText(f"{key} = {value}")
-                comment = value.trivia.comment if hasattr(value, 'trivia') and value.trivia.comment else None
+                comment = value.trivia.comment if hasattr(value, "trivia") and value.trivia.comment else None
                 key_line_edit.setToolTip(comment if comment else "No comment available")
                 key_line_edit.setObjectName(full_key)
                 self.main_layout.addWidget(key_line_edit)
 
     def save_config_file(self) -> None:
         if not self.current_file_path:
-            QMessageBox.warning(self, "Warning", "No file loaded to save.", QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
+            QMessageBox.warning(
+                self, "Warning", "No file loaded to save.", QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton
+            )
             return
 
         if self.current_file_path.endswith(".ini"):
@@ -122,11 +126,11 @@ class ConfigEditor(QMainWindow):
                 if line_edit:
                     parser[section][key] = line_edit.text() if line_edit.text() else parser[section][key]
 
-        with Path(self.current_file_path).open('w', encoding='utf-8') as file:
+        with Path(self.current_file_path).open("w", encoding="utf-8") as file:
             if self.original_ini_content:
                 for line in self.original_ini_content:
                     file.write(line)
-                    if line.strip().startswith('['):
+                    if line.strip().startswith("["):
                         section = line.strip()[1:-1]
                         if section in parser:
                             for key, value in parser.items(section):
@@ -141,7 +145,7 @@ class ConfigEditor(QMainWindow):
             if line_edit:
                 data[key] = line_edit.text() if line_edit.text() else data[key]
 
-        Path(self.current_file_path).write_text(tomlkit.dumps(data), encoding='utf-8')
+        Path(self.current_file_path).write_text(tomlkit.dumps(data), encoding="utf-8")
 
 
 if __name__ == "__main__":
